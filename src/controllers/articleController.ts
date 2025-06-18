@@ -192,18 +192,17 @@ export class ArticleController {
             const limit = parseInt(req.query.limit as string) || 10;
             const category = req.query.category as string;
 
-            let result;
+            const result = await ArticleService.getTrendingArticles(
+                page,
+                limit
+            );
             if (category) {
-                const articles = await ArticleService.getArticlesByCategory(
-                    category
+                const articles = result.articles.filter(
+                    (article) => article.category === category
                 );
-                result = {
-                    articles,
-                    total: articles.length,
-                    hasMore: false,
-                };
-            } else {
-                result = await ArticleService.getTrendingArticles(page, limit);
+                result.articles = articles;
+                result.total = articles.length;
+                result.hasMore = articles.length > limit;
             }
 
             res.status(200).json({

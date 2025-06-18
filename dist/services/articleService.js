@@ -165,6 +165,7 @@ class ArticleService {
                 .from(db_1.articles)
                 .leftJoin(db_1.users, (0, drizzle_orm_1.eq)(db_1.articles.authorId, db_1.users.id))
                 .orderBy((0, drizzle_orm_1.desc)(db_1.articles.createdAt))
+                .where((0, drizzle_orm_1.eq)(db_1.articles.isTrending, true))
                 .limit(limit)
                 .offset(offset);
             const totalResult = await db_1.db

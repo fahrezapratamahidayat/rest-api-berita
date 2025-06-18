@@ -225,6 +225,7 @@ export class ArticleService {
                 .from(articles)
                 .leftJoin(users, eq(articles.authorId, users.id))
                 .orderBy(desc(articles.createdAt))
+                .where(eq(articles.isTrending, true))
                 .limit(limit)
                 .offset(offset);
 
