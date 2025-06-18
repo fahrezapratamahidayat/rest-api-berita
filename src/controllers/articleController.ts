@@ -171,6 +171,8 @@ export class ArticleController {
                 });
             }
 
+            const deleted = ArticleService.deleteArticle(id);
+
             res.status(200).json({
                 success: true,
                 message: "Article deleted successfully",
