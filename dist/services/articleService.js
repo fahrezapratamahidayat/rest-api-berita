@@ -59,6 +59,7 @@ class ArticleService {
                 isTrending: db_1.articles.isTrending,
                 tags: db_1.articles.tags,
                 content: db_1.articles.content,
+                authorId: db_1.articles.authorId,
                 createdAt: db_1.articles.createdAt,
                 updatedAt: db_1.articles.updatedAt,
                 author: {

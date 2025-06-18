@@ -81,6 +81,7 @@ export class ArticleService {
                     isTrending: articles.isTrending,
                     tags: articles.tags,
                     content: articles.content,
+                    authorId: articles.authorId,
                     createdAt: articles.createdAt,
                     updatedAt: articles.updatedAt,
                     author: {
