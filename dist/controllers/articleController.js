@@ -169,11 +169,33 @@ class ArticleController {
     }
     static async getTrendingArticles(req, res) {
         try {
-            const articles = await articleService_1.ArticleService.getTrendingArticles();
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const category = req.query.category;
+            let result;
+            if (category) {
+                const articles = await articleService_1.ArticleService.getArticlesByCategory(category);
+                result = {
+                    articles,
+                    total: articles.length,
+                    hasMore: false,
+                };
+            }
+            else {
+                result = await articleService_1.ArticleService.getTrendingArticles(page, limit);
+            }
             res.status(200).json({
                 success: true,
-                message: "Trending articles retrieved successfully",
-                data: articles,
+                message: "Articles trending retrieved successfully",
+                data: {
+                    articles: result.articles,
+                    pagination: {
+                        page,
+                        limit,
+                        total: result.total,
+                        hasMore: result.hasMore,
+                    },
+                },
             });
         }
         catch (error) {

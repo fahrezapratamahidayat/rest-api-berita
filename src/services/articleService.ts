@@ -193,15 +193,52 @@ export class ArticleService {
         }
     }
 
-    static async getTrendingArticles(): Promise<Article[]> {
+    static async getTrendingArticles(
+        page: number = 1,
+        limit: number = 10
+    ): Promise<{
+        articles: ArticleWithAuthor[];
+        total: number;
+        hasMore: boolean;
+    }> {
+        const offset = (page - 1) * limit;
         try {
-            const result = await db
-                .select()
+            const articlesList = await db
+                .select({
+                    id: articles.id,
+                    title: articles.title,
+                    category: articles.category,
+                    publishedAt: articles.publishedAt,
+                    readTime: articles.readTime,
+                    imageUrl: articles.imageUrl,
+                    isTrending: articles.isTrending,
+                    tags: articles.tags,
+                    content: articles.content,
+                    createdAt: articles.createdAt,
+                    updatedAt: articles.updatedAt,
+                    author: {
+                        name: users.name,
+                        title: users.title,
+                        avatar: users.avatar,
+                    },
+                })
                 .from(articles)
-                .where(eq(articles.isTrending, true))
-                .orderBy(desc(articles.createdAt));
+                .leftJoin(users, eq(articles.authorId, users.id))
+                .orderBy(desc(articles.createdAt))
+                .limit(limit)
+                .offset(offset);
 
-            return result;
+            const totalResult = await db
+                .select({ count: articles.id })
+                .from(articles);
+
+            const total = totalResult.length;
+
+            return {
+                articles: articlesList,
+                total,
+                hasMore: total > offset + limit,
+            };
         } catch (error) {
             throw new Error(
                 `Failed to fetch trending articles: ${

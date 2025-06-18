@@ -140,14 +140,42 @@ class ArticleService {
             throw new Error(`Failed to fetch articles by category: ${error instanceof Error ? error.message : "Unknown error"}`);
         }
     }
-    static async getTrendingArticles() {
+    static async getTrendingArticles(page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
         try {
-            const result = await db_1.db
-                .select()
+            const articlesList = await db_1.db
+                .select({
+                id: db_1.articles.id,
+                title: db_1.articles.title,
+                category: db_1.articles.category,
+                publishedAt: db_1.articles.publishedAt,
+                readTime: db_1.articles.readTime,
+                imageUrl: db_1.articles.imageUrl,
+                isTrending: db_1.articles.isTrending,
+                tags: db_1.articles.tags,
+                content: db_1.articles.content,
+                createdAt: db_1.articles.createdAt,
+                updatedAt: db_1.articles.updatedAt,
+                author: {
+                    name: db_1.users.name,
+                    title: db_1.users.title,
+                    avatar: db_1.users.avatar,
+                },
+            })
                 .from(db_1.articles)
-                .where((0, drizzle_orm_1.eq)(db_1.articles.isTrending, true))
-                .orderBy((0, drizzle_orm_1.desc)(db_1.articles.createdAt));
-            return result;
+                .leftJoin(db_1.users, (0, drizzle_orm_1.eq)(db_1.articles.authorId, db_1.users.id))
+                .orderBy((0, drizzle_orm_1.desc)(db_1.articles.createdAt))
+                .limit(limit)
+                .offset(offset);
+            const totalResult = await db_1.db
+                .select({ count: db_1.articles.id })
+                .from(db_1.articles);
+            const total = totalResult.length;
+            return {
+                articles: articlesList,
+                total,
+                hasMore: total > offset + limit,
+            };
         }
         catch (error) {
             throw new Error(`Failed to fetch trending articles: ${error instanceof Error ? error.message : "Unknown error"}`);

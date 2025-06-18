@@ -188,12 +188,36 @@ export class ArticleController {
 
     static async getTrendingArticles(req: Request, res: Response<ApiResponse>) {
         try {
-            const articles = await ArticleService.getTrendingArticles();
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const category = req.query.category as string;
+
+            let result;
+            if (category) {
+                const articles = await ArticleService.getArticlesByCategory(
+                    category
+                );
+                result = {
+                    articles,
+                    total: articles.length,
+                    hasMore: false,
+                };
+            } else {
+                result = await ArticleService.getTrendingArticles(page, limit);
+            }
 
             res.status(200).json({
                 success: true,
-                message: "Trending articles retrieved successfully",
-                data: articles,
+                message: "Articles trending retrieved successfully",
+                data: {
+                    articles: result.articles,
+                    pagination: {
+                        page,
+                        limit,
+                        total: result.total,
+                        hasMore: result.hasMore,
+                    },
+                },
             });
         } catch (error) {
             res.status(500).json({
