@@ -25,8 +25,10 @@ router.get("/health", (req, res) => {
                     description: "Mendaftarkan pengguna baru",
                     body: {
                         email: "string (required)",
-                        password: "string (required)",
+                        password: "string (required) min 16 character",
                         name: "string (required)",
+                        title: "string (required)",
+                        avatar: "string (required)",
                     },
                 },
                 login: {
@@ -73,11 +75,6 @@ router.get("/health", (req, res) => {
                         isTrending: "boolean (optional)",
                         tags: "string[] (optional)",
                         content: "string (required)",
-                        author: {
-                            name: "string (required)",
-                            title: "string (required)",
-                            avatar: "string (optional)",
-                        },
                     },
                 },
                 updateArticle: {
