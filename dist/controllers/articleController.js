@@ -204,7 +204,6 @@ class ArticleController {
     static async getUserArticles(req, res) {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
-        const category = req.query.category;
         try {
             if (!req.user) {
                 return res.status(401).json({

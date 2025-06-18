@@ -273,6 +273,11 @@ export class ArticleService {
                     tags: articles.tags,
                     content: articles.content,
                     authorId: articles.authorId,
+                    users: {
+                        name: users.name,
+                        title: users.title,
+                        avatar: users.avatar,
+                    },
                     createdAt: articles.createdAt,
                     updatedAt: articles.updatedAt,
                 })

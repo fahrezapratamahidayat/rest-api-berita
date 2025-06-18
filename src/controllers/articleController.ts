@@ -230,7 +230,6 @@ export class ArticleController {
     static async getUserArticles(req: AuthRequest, res: Response<ApiResponse>) {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
-        const category = req.query.category as string;
         try {
             if (!req.user) {
                 return res.status(401).json({
