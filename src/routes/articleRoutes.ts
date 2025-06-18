@@ -59,4 +59,10 @@ router.delete(
     ArticleController.unsaveArticle
 );
 
+router.get(
+    "/:id/bookmark",
+    authenticateToken,
+    ArticleController.checkSavedStatus
+);
+
 export default router;

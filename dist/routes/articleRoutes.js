@@ -19,5 +19,6 @@ router.get("/user/me", auth_1.authenticateToken, articleController_1.ArticleCont
 router.get("/bookmarks/list", auth_1.authenticateToken, articleController_1.ArticleController.getSavedArticles);
 router.post("/:id/bookmark", auth_1.authenticateToken, validation_1.validateArticleId, articleController_1.ArticleController.saveArticle);
 router.delete("/:id/bookmark", auth_1.authenticateToken, validation_1.validateArticleId, articleController_1.ArticleController.unsaveArticle);
+router.get("/:id/bookmark", auth_1.authenticateToken, articleController_1.ArticleController.checkSavedStatus);
 exports.default = router;
 //# sourceMappingURL=articleRoutes.js.map
