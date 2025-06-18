@@ -202,6 +202,9 @@ class ArticleController {
         }
     }
     static async getUserArticles(req, res) {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const category = req.query.category;
         try {
             if (!req.user) {
                 return res.status(401).json({
@@ -209,13 +212,18 @@ class ArticleController {
                     message: "Authentication required",
                 });
             }
-            const articles = await articleService_1.ArticleService.getArticlesByUser(req.user.userId);
+            const articles = await articleService_1.ArticleService.getArticlesByUser(req.user.userId, page, limit);
             res.status(200).json({
                 success: true,
-                message: "Your articles retrieved successfully",
+                message: "Your Article successfully",
                 data: {
-                    articles,
-                    total: articles.length,
+                    articles: articles.articles,
+                    pagination: {
+                        page,
+                        limit,
+                        total: articles.total,
+                        hasMore: articles.hasMore,
+                    },
                 },
             });
         }
@@ -282,6 +290,8 @@ class ArticleController {
         }
     }
     static async getSavedArticles(req, res) {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
         try {
             if (!req.user) {
                 return res.status(401).json({
@@ -295,8 +305,13 @@ class ArticleController {
                 success: true,
                 message: "Bookmarked articles retrieved successfully",
                 data: {
-                    articles,
-                    total: articles.length,
+                    articles: articles.articles,
+                    pagination: {
+                        page,
+                        limit,
+                        total: articles.total,
+                        hasMore: articles.hasMore,
+                    },
                 },
             });
         }

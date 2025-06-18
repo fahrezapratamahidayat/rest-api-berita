@@ -228,6 +228,9 @@ export class ArticleController {
     }
 
     static async getUserArticles(req: AuthRequest, res: Response<ApiResponse>) {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const category = req.query.category as string;
         try {
             if (!req.user) {
                 return res.status(401).json({
@@ -237,15 +240,22 @@ export class ArticleController {
             }
 
             const articles = await ArticleService.getArticlesByUser(
-                req.user.userId
+                req.user.userId,
+                page,
+                limit,
             );
 
             res.status(200).json({
                 success: true,
-                message: "Your articles retrieved successfully",
+                message: "Your Article successfully",
                 data: {
-                    articles,
-                    total: articles.length,
+                    articles: articles.articles,
+                    pagination: {
+                        page,
+                        limit,
+                        total: articles.total,
+                        hasMore: articles.hasMore,
+                    },
                 },
             });
         } catch (error) {
@@ -322,6 +332,8 @@ export class ArticleController {
         req: AuthRequest,
         res: Response<ApiResponse>
     ) {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
         try {
             if (!req.user) {
                 return res.status(401).json({
@@ -337,8 +349,13 @@ export class ArticleController {
                 success: true,
                 message: "Bookmarked articles retrieved successfully",
                 data: {
-                    articles,
-                    total: articles.length,
+                    articles: articles.articles,
+                    pagination: {
+                        page,
+                        limit,
+                        total: articles.total,
+                        hasMore: articles.hasMore,
+                    },
                 },
             });
         } catch (error) {

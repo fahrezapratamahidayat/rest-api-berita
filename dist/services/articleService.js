@@ -182,9 +182,10 @@ class ArticleService {
             throw new Error(`Failed to fetch trending articles: ${error instanceof Error ? error.message : "Unknown error"}`);
         }
     }
-    static async getArticlesByUser(userId) {
+    static async getArticlesByUser(userId, page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
         try {
-            const result = await db_1.db
+            const articlesList = await db_1.db
                 .select({
                 id: db_1.articles.id,
                 title: db_1.articles.title,
@@ -195,19 +196,23 @@ class ArticleService {
                 isTrending: db_1.articles.isTrending,
                 tags: db_1.articles.tags,
                 content: db_1.articles.content,
+                authorId: db_1.articles.authorId,
                 createdAt: db_1.articles.createdAt,
                 updatedAt: db_1.articles.updatedAt,
-                author: {
-                    name: db_1.users.name,
-                    title: db_1.users.title,
-                    avatar: db_1.users.avatar,
-                },
             })
                 .from(db_1.articles)
                 .leftJoin(db_1.users, (0, drizzle_orm_1.eq)(db_1.articles.authorId, db_1.users.id))
                 .where((0, drizzle_orm_1.eq)(db_1.articles.authorId, userId))
                 .orderBy((0, drizzle_orm_1.desc)(db_1.articles.createdAt));
-            return result;
+            const totalResult = await db_1.db
+                .select({ count: db_1.articles.id })
+                .from(db_1.articles);
+            const total = totalResult.length;
+            return {
+                articles: articlesList,
+                total,
+                hasMore: total > offset + limit,
+            };
         }
         catch (error) {
             throw new Error(`Failed to fetch user articles: ${error instanceof Error ? error.message : "Unknown error"}`);
@@ -252,9 +257,10 @@ class ArticleService {
             throw new Error(`Failed to unsave article: ${error instanceof Error ? error.message : "Unknown error"}`);
         }
     }
-    static async getSavedArticles(userId) {
+    static async getSavedArticles(userId, page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
         try {
-            const result = await db_1.db
+            const articlesList = await db_1.db
                 .select({
                 id: db_1.articles.id,
                 title: db_1.articles.title,
@@ -278,7 +284,15 @@ class ArticleService {
                 .leftJoin(db_1.users, (0, drizzle_orm_1.eq)(db_1.articles.authorId, db_1.users.id))
                 .where((0, drizzle_orm_1.eq)(db_1.savedArticles.userId, userId))
                 .orderBy((0, drizzle_orm_1.desc)(db_1.savedArticles.savedAt));
-            return result;
+            const totalResult = await db_1.db
+                .select({ count: db_1.articles.id })
+                .from(db_1.articles);
+            const total = totalResult.length;
+            return {
+                articles: articlesList,
+                total,
+                hasMore: total > offset + limit,
+            };
         }
         catch (error) {
             throw new Error(`Failed to fetch saved articles: ${error instanceof Error ? error.message : "Unknown error"}`);

@@ -16,10 +16,18 @@ export declare class ArticleService {
         total: number;
         hasMore: boolean;
     }>;
-    static getArticlesByUser(userId: string): Promise<ArticleWithAuthor[]>;
+    static getArticlesByUser(userId: string, page?: number, limit?: number): Promise<{
+        articles: Article[];
+        total: number;
+        hasMore: boolean;
+    }>;
     static saveArticle(userId: string, articleId: string): Promise<boolean>;
     static unsaveArticle(userId: string, articleId: string): Promise<boolean>;
-    static getSavedArticles(userId: string): Promise<ArticleWithAuthor[]>;
+    static getSavedArticles(userId: string, page?: number, limit?: number): Promise<{
+        articles: ArticleWithAuthor[];
+        total: number;
+        hasMore: boolean;
+    }>;
     static isSaved(userId: string, articleId: string): Promise<boolean>;
 }
 //# sourceMappingURL=articleService.d.ts.map

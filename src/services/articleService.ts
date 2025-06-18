@@ -250,10 +250,17 @@ export class ArticleService {
     }
 
     static async getArticlesByUser(
-        userId: string
-    ): Promise<ArticleWithAuthor[]> {
+        userId: string,
+        page: number = 1,
+        limit: number = 10
+    ): Promise<{
+        articles: Article[];
+        total: number;
+        hasMore: boolean;
+    }> {
+        const offset = (page - 1) * limit;
         try {
-            const result = await db
+            const articlesList = await db
                 .select({
                     id: articles.id,
                     title: articles.title,
@@ -264,20 +271,26 @@ export class ArticleService {
                     isTrending: articles.isTrending,
                     tags: articles.tags,
                     content: articles.content,
+                    authorId: articles.authorId,
                     createdAt: articles.createdAt,
                     updatedAt: articles.updatedAt,
-                    author: {
-                        name: users.name,
-                        title: users.title,
-                        avatar: users.avatar,
-                    },
                 })
                 .from(articles)
                 .leftJoin(users, eq(articles.authorId, users.id))
                 .where(eq(articles.authorId, userId))
                 .orderBy(desc(articles.createdAt));
 
-            return result;
+            const totalResult = await db
+                .select({ count: articles.id })
+                .from(articles);
+
+            const total = totalResult.length;
+
+            return {
+                articles: articlesList,
+                total,
+                hasMore: total > offset + limit,
+            };
         } catch (error) {
             throw new Error(
                 `Failed to fetch user articles: ${
@@ -356,10 +369,17 @@ export class ArticleService {
     }
 
     static async getSavedArticles(
-        userId: string
-    ): Promise<ArticleWithAuthor[]> {
+        userId: string,
+        page: number = 1,
+        limit: number = 10
+    ): Promise<{
+        articles: ArticleWithAuthor[];
+        total: number;
+        hasMore: boolean;
+    }> {
+        const offset = (page - 1) * limit;
         try {
-            const result = await db
+            const articlesList = await db
                 .select({
                     id: articles.id,
                     title: articles.title,
@@ -384,7 +404,17 @@ export class ArticleService {
                 .where(eq(savedArticles.userId, userId))
                 .orderBy(desc(savedArticles.savedAt));
 
-            return result;
+            const totalResult = await db
+                .select({ count: articles.id })
+                .from(articles);
+
+            const total = totalResult.length;
+
+            return {
+                articles: articlesList,
+                total,
+                hasMore: total > offset + limit,
+            };
         } catch (error) {
             throw new Error(
                 `Failed to fetch saved articles: ${
