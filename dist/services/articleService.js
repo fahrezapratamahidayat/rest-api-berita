@@ -1,0 +1,140 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ArticleService = void 0;
+const db_1 = require("../db");
+const drizzle_orm_1 = require("drizzle-orm");
+const cuid2_1 = require("@paralleldrive/cuid2");
+class ArticleService {
+    static async getAllArticles(page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
+        try {
+            const articlesList = await db_1.db
+                .select({
+                id: db_1.articles.id,
+                title: db_1.articles.title,
+                category: db_1.articles.category,
+                publishedAt: db_1.articles.publishedAt,
+                readTime: db_1.articles.readTime,
+                imageUrl: db_1.articles.imageUrl,
+                isTrending: db_1.articles.isTrending,
+                tags: db_1.articles.tags,
+                content: db_1.articles.content,
+                createdAt: db_1.articles.createdAt,
+                updatedAt: db_1.articles.updatedAt,
+                author: {
+                    name: db_1.users.name,
+                    title: db_1.users.title,
+                    avatar: db_1.users.avatar,
+                },
+            })
+                .from(db_1.articles)
+                .leftJoin(db_1.users, (0, drizzle_orm_1.eq)(db_1.articles.authorId, db_1.users.id))
+                .orderBy((0, drizzle_orm_1.desc)(db_1.articles.createdAt))
+                .limit(limit)
+                .offset(offset);
+            const totalResult = await db_1.db
+                .select({ count: db_1.articles.id })
+                .from(db_1.articles);
+            const total = totalResult.length;
+            return {
+                articles: articlesList,
+                total,
+                hasMore: total > offset + limit,
+            };
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch articles: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async getArticleById(id) {
+        try {
+            const result = await db_1.db
+                .select()
+                .from(db_1.articles)
+                .where((0, drizzle_orm_1.eq)(db_1.articles.id, id))
+                .limit(1);
+            return result[0] || null;
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch article: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async createArticle(articleData) {
+        try {
+            const newArticle = {
+                id: (0, cuid2_1.createId)(),
+                ...articleData,
+                publishedAt: new Date().toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                }),
+                isTrending: articleData.isTrending || false,
+            };
+            const result = await db_1.db
+                .insert(db_1.articles)
+                .values(newArticle)
+                .returning();
+            return result[0];
+        }
+        catch (error) {
+            throw new Error(`Failed to create article: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async updateArticle(id, articleData) {
+        try {
+            const result = await db_1.db
+                .update(db_1.articles)
+                .set({
+                ...articleData,
+                updatedAt: new Date(),
+            })
+                .where((0, drizzle_orm_1.eq)(db_1.articles.id, id))
+                .returning();
+            return result[0] || null;
+        }
+        catch (error) {
+            throw new Error(`Failed to update article: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async deleteArticle(id) {
+        try {
+            const result = await db_1.db
+                .delete(db_1.articles)
+                .where((0, drizzle_orm_1.eq)(db_1.articles.id, id))
+                .returning();
+            return result.length > 0;
+        }
+        catch (error) {
+            throw new Error(`Failed to delete article: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async getArticlesByCategory(category) {
+        try {
+            const result = await db_1.db
+                .select()
+                .from(db_1.articles)
+                .where((0, drizzle_orm_1.eq)(db_1.articles.category, category))
+                .orderBy((0, drizzle_orm_1.desc)(db_1.articles.createdAt));
+            return result;
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch articles by category: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async getTrendingArticles() {
+        try {
+            const result = await db_1.db
+                .select()
+                .from(db_1.articles)
+                .where((0, drizzle_orm_1.eq)(db_1.articles.isTrending, true))
+                .orderBy((0, drizzle_orm_1.desc)(db_1.articles.createdAt));
+            return result;
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch trending articles: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+}
+exports.ArticleService = ArticleService;
+//# sourceMappingURL=articleService.js.map
