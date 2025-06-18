@@ -12,5 +12,10 @@ export declare class ArticleService {
     static deleteArticle(id: string): Promise<boolean>;
     static getArticlesByCategory(category: string): Promise<Article[]>;
     static getTrendingArticles(): Promise<Article[]>;
+    static getArticlesByUser(userId: string): Promise<ArticleWithAuthor[]>;
+    static saveArticle(userId: string, articleId: string): Promise<boolean>;
+    static unsaveArticle(userId: string, articleId: string): Promise<boolean>;
+    static getSavedArticles(userId: string): Promise<ArticleWithAuthor[]>;
+    static isSaved(userId: string, articleId: string): Promise<boolean>;
 }
 //# sourceMappingURL=articleService.d.ts.map

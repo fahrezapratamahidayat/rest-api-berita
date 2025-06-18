@@ -1,4 +1,11 @@
-import { pgTable, text, uuid, timestamp, boolean } from "drizzle-orm/pg-core";
+import {
+    pgTable,
+    text,
+    uuid,
+    timestamp,
+    boolean,
+    primaryKey,
+} from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 
@@ -31,6 +38,24 @@ export const articles = pgTable("articles", {
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const savedArticles = pgTable(
+    "saved_articles",
+    {
+        userId: uuid("user_id")
+            .notNull()
+            .references(() => users.id),
+        articleId: text("article_id")
+            .notNull()
+            .references(() => articles.id),
+        savedAt: timestamp("saved_at").defaultNow().notNull(),
+    },
+    (table) => {
+        return {
+            pk: primaryKey({ columns: [table.userId, table.articleId] }),
+        };
+    }
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
     articles: many(articles),
 }));
@@ -39,6 +64,17 @@ export const articlesRelations = relations(articles, ({ one }) => ({
     author: one(users, {
         fields: [articles.authorId],
         references: [users.id],
+    }),
+}));
+
+export const savedArticlesRelations = relations(savedArticles, ({ one }) => ({
+    user: one(users, {
+        fields: [savedArticles.userId],
+        references: [users.id],
+    }),
+    article: one(articles, {
+        fields: [savedArticles.articleId],
+        references: [articles.id],
     }),
 }));
 
@@ -54,3 +90,5 @@ export type ArticleWithAuthor = Omit<Article, "authorId"> & {
     } | null;
 };
 export type NewArticle = typeof articles.$inferInsert;
+export type SavedArticle = typeof savedArticles.$inferSelect;
+export type NewSavedArticle = typeof savedArticles.$inferInsert;

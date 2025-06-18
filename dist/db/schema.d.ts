@@ -251,11 +251,58 @@ export declare const articles: import("drizzle-orm/pg-core").PgTableWithColumns<
     };
     dialect: "pg";
 }>;
+export declare const savedArticles: import("drizzle-orm/pg-core").PgTableWithColumns<{
+    name: "saved_articles";
+    schema: undefined;
+    columns: {
+        userId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "user_id";
+            tableName: "saved_articles";
+            dataType: "string";
+            columnType: "PgUUID";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+        }, {}, {}>;
+        articleId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "article_id";
+            tableName: "saved_articles";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+        }, {}, {}>;
+        savedAt: import("drizzle-orm/pg-core").PgColumn<{
+            name: "saved_at";
+            tableName: "saved_articles";
+            dataType: "date";
+            columnType: "PgTimestamp";
+            data: Date;
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            enumValues: undefined;
+            baseColumn: never;
+        }, {}, {}>;
+    };
+    dialect: "pg";
+}>;
 export declare const usersRelations: import("drizzle-orm").Relations<"users", {
     articles: import("drizzle-orm").Many<"articles">;
 }>;
 export declare const articlesRelations: import("drizzle-orm").Relations<"articles", {
     author: import("drizzle-orm").One<"users", true>;
+}>;
+export declare const savedArticlesRelations: import("drizzle-orm").Relations<"saved_articles", {
+    user: import("drizzle-orm").One<"users", true>;
+    article: import("drizzle-orm").One<"articles", true>;
 }>;
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -269,4 +316,6 @@ export type ArticleWithAuthor = Omit<Article, "authorId"> & {
     } | null;
 };
 export type NewArticle = typeof articles.$inferInsert;
+export type SavedArticle = typeof savedArticles.$inferSelect;
+export type NewSavedArticle = typeof savedArticles.$inferInsert;
 //# sourceMappingURL=schema.d.ts.map

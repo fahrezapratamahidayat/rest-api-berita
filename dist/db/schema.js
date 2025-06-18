@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.articlesRelations = exports.usersRelations = exports.articles = exports.users = void 0;
+exports.savedArticlesRelations = exports.articlesRelations = exports.usersRelations = exports.savedArticles = exports.articles = exports.users = void 0;
 const pg_core_1 = require("drizzle-orm/pg-core");
 const cuid2_1 = require("@paralleldrive/cuid2");
 const drizzle_orm_1 = require("drizzle-orm");
@@ -31,6 +31,19 @@ exports.articles = (0, pg_core_1.pgTable)("articles", {
     createdAt: (0, pg_core_1.timestamp)("created_at").defaultNow().notNull(),
     updatedAt: (0, pg_core_1.timestamp)("updated_at").defaultNow().notNull(),
 });
+exports.savedArticles = (0, pg_core_1.pgTable)("saved_articles", {
+    userId: (0, pg_core_1.uuid)("user_id")
+        .notNull()
+        .references(() => exports.users.id),
+    articleId: (0, pg_core_1.text)("article_id")
+        .notNull()
+        .references(() => exports.articles.id),
+    savedAt: (0, pg_core_1.timestamp)("saved_at").defaultNow().notNull(),
+}, (table) => {
+    return {
+        pk: (0, pg_core_1.primaryKey)({ columns: [table.userId, table.articleId] }),
+    };
+});
 exports.usersRelations = (0, drizzle_orm_1.relations)(exports.users, ({ many }) => ({
     articles: many(exports.articles),
 }));
@@ -38,6 +51,16 @@ exports.articlesRelations = (0, drizzle_orm_1.relations)(exports.articles, ({ on
     author: one(exports.users, {
         fields: [exports.articles.authorId],
         references: [exports.users.id],
+    }),
+}));
+exports.savedArticlesRelations = (0, drizzle_orm_1.relations)(exports.savedArticles, ({ one }) => ({
+    user: one(exports.users, {
+        fields: [exports.savedArticles.userId],
+        references: [exports.users.id],
+    }),
+    article: one(exports.articles, {
+        fields: [exports.savedArticles.articleId],
+        references: [exports.articles.id],
     }),
 }));
 //# sourceMappingURL=schema.js.map

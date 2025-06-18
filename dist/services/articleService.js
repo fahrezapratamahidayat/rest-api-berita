@@ -153,6 +153,121 @@ class ArticleService {
             throw new Error(`Failed to fetch trending articles: ${error instanceof Error ? error.message : "Unknown error"}`);
         }
     }
+    static async getArticlesByUser(userId) {
+        try {
+            const result = await db_1.db
+                .select({
+                id: db_1.articles.id,
+                title: db_1.articles.title,
+                category: db_1.articles.category,
+                publishedAt: db_1.articles.publishedAt,
+                readTime: db_1.articles.readTime,
+                imageUrl: db_1.articles.imageUrl,
+                isTrending: db_1.articles.isTrending,
+                tags: db_1.articles.tags,
+                content: db_1.articles.content,
+                createdAt: db_1.articles.createdAt,
+                updatedAt: db_1.articles.updatedAt,
+                author: {
+                    name: db_1.users.name,
+                    title: db_1.users.title,
+                    avatar: db_1.users.avatar,
+                },
+            })
+                .from(db_1.articles)
+                .leftJoin(db_1.users, (0, drizzle_orm_1.eq)(db_1.articles.authorId, db_1.users.id))
+                .where((0, drizzle_orm_1.eq)(db_1.articles.authorId, userId))
+                .orderBy((0, drizzle_orm_1.desc)(db_1.articles.createdAt));
+            return result;
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch user articles: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async saveArticle(userId, articleId) {
+        try {
+            // Check if article exists
+            const article = await this.getArticleById(articleId);
+            if (!article) {
+                throw new Error("Article not found");
+            }
+            // Check if already saved
+            const existing = await db_1.db
+                .select()
+                .from(db_1.savedArticles)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(db_1.savedArticles.userId, userId), (0, drizzle_orm_1.eq)(db_1.savedArticles.articleId, articleId)))
+                .limit(1);
+            if (existing.length > 0) {
+                return true; // Already saved
+            }
+            // Save article
+            await db_1.db.insert(db_1.savedArticles).values({
+                userId,
+                articleId,
+            });
+            return true;
+        }
+        catch (error) {
+            throw new Error(`Failed to save article: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async unsaveArticle(userId, articleId) {
+        try {
+            const result = await db_1.db
+                .delete(db_1.savedArticles)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(db_1.savedArticles.userId, userId), (0, drizzle_orm_1.eq)(db_1.savedArticles.articleId, articleId)))
+                .returning();
+            return result.length > 0;
+        }
+        catch (error) {
+            throw new Error(`Failed to unsave article: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async getSavedArticles(userId) {
+        try {
+            const result = await db_1.db
+                .select({
+                id: db_1.articles.id,
+                title: db_1.articles.title,
+                category: db_1.articles.category,
+                publishedAt: db_1.articles.publishedAt,
+                readTime: db_1.articles.readTime,
+                imageUrl: db_1.articles.imageUrl,
+                isTrending: db_1.articles.isTrending,
+                tags: db_1.articles.tags,
+                content: db_1.articles.content,
+                createdAt: db_1.articles.createdAt,
+                updatedAt: db_1.articles.updatedAt,
+                author: {
+                    name: db_1.users.name,
+                    title: db_1.users.title,
+                    avatar: db_1.users.avatar,
+                },
+            })
+                .from(db_1.savedArticles)
+                .innerJoin(db_1.articles, (0, drizzle_orm_1.eq)(db_1.savedArticles.articleId, db_1.articles.id))
+                .leftJoin(db_1.users, (0, drizzle_orm_1.eq)(db_1.articles.authorId, db_1.users.id))
+                .where((0, drizzle_orm_1.eq)(db_1.savedArticles.userId, userId))
+                .orderBy((0, drizzle_orm_1.desc)(db_1.savedArticles.savedAt));
+            return result;
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch saved articles: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async isSaved(userId, articleId) {
+        try {
+            const result = await db_1.db
+                .select()
+                .from(db_1.savedArticles)
+                .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(db_1.savedArticles.userId, userId), (0, drizzle_orm_1.eq)(db_1.savedArticles.articleId, articleId)))
+                .limit(1);
+            return result.length > 0;
+        }
+        catch (error) {
+            throw new Error(`Failed to check saved status: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
 }
 exports.ArticleService = ArticleService;
 //# sourceMappingURL=articleService.js.map

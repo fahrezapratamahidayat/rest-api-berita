@@ -184,6 +184,138 @@ class ArticleController {
             });
         }
     }
+    static async getUserArticles(req, res) {
+        try {
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Authentication required",
+                });
+            }
+            const articles = await articleService_1.ArticleService.getArticlesByUser(req.user.userId);
+            res.status(200).json({
+                success: true,
+                message: "Your articles retrieved successfully",
+                data: {
+                    articles,
+                    total: articles.length,
+                },
+            });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Failed to retrieve your articles",
+                error: error instanceof Error ? error.message : "Unknown error",
+            });
+        }
+    }
+    static async saveArticle(req, res) {
+        try {
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Authentication required",
+                });
+            }
+            const { id } = req.params;
+            const userId = req.user.userId;
+            await articleService_1.ArticleService.saveArticle(userId, id);
+            res.status(200).json({
+                success: true,
+                message: "Article saved to bookmarks",
+            });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Failed to save article",
+                error: error instanceof Error ? error.message : "Unknown error",
+            });
+        }
+    }
+    static async unsaveArticle(req, res) {
+        try {
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Authentication required",
+                });
+            }
+            const { id } = req.params;
+            const userId = req.user.userId;
+            const result = await articleService_1.ArticleService.unsaveArticle(userId, id);
+            if (!result) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Article not found in your bookmarks",
+                });
+            }
+            res.status(200).json({
+                success: true,
+                message: "Article removed from bookmarks",
+            });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Failed to remove article from bookmarks",
+                error: error instanceof Error ? error.message : "Unknown error",
+            });
+        }
+    }
+    static async getSavedArticles(req, res) {
+        try {
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Authentication required",
+                });
+            }
+            const userId = req.user.userId;
+            const articles = await articleService_1.ArticleService.getSavedArticles(userId);
+            res.status(200).json({
+                success: true,
+                message: "Bookmarked articles retrieved successfully",
+                data: {
+                    articles,
+                    total: articles.length,
+                },
+            });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Failed to retrieve bookmarked articles",
+                error: error instanceof Error ? error.message : "Unknown error",
+            });
+        }
+    }
+    static async checkSavedStatus(req, res) {
+        try {
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Authentication required",
+                });
+            }
+            const { id } = req.params;
+            const userId = req.user.userId;
+            const isSaved = await articleService_1.ArticleService.isSaved(userId, id);
+            res.status(200).json({
+                success: true,
+                message: "Bookmark status retrieved",
+                data: { isSaved },
+            });
+        }
+        catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Failed to check bookmark status",
+                error: error instanceof Error ? error.message : "Unknown error",
+            });
+        }
+    }
 }
 exports.ArticleController = ArticleController;
 //# sourceMappingURL=articleController.js.map
