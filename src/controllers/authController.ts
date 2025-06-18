@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/authService";
-import { generateToken } from "../config/jwt";
+import { generateRefreshToken, generateToken, verifyToken } from "../config/jwt";
 import { ApiResponse } from "../types";
 
 export class AuthController {
@@ -19,7 +19,7 @@ export class AuthController {
                 userId: user.id,
                 email: user.email,
                 name: user.name,
-                title: user.avatar,
+                title: user.title,
                 avatar: user.avatar,
             });
 
@@ -31,7 +31,7 @@ export class AuthController {
                         id: user.id,
                         email: user.email,
                         name: user.name,
-                        title: user.avatar,
+                        title: user.title,
                         avatar: user.avatar,
                     },
                     token,
@@ -89,4 +89,37 @@ export class AuthController {
             });
         }
     }
+
+static async refreshToken(req: Request, res: Response<ApiResponse>) {
+    try {
+        const { refreshToken } = req.body;
+
+        const decoded = verifyToken(refreshToken);
+        if (!decoded) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid refresh token",
+            });
+        }
+
+        const newToken = generateToken({
+            userId: decoded.userId,
+            email: decoded.email,
+            name: decoded.name,
+            title: decoded.title,
+            avatar: decoded.avatar,
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Token refreshed",
+            data: { token: newToken }
+        });
+    } catch (error) {
+        res.status(401).json({
+            success: false,
+            message: "Invalid refresh token",
+        });
+    }
+}
 }

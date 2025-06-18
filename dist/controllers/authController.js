@@ -12,7 +12,7 @@ class AuthController {
                 userId: user.id,
                 email: user.email,
                 name: user.name,
-                title: user.avatar,
+                title: user.title,
                 avatar: user.avatar,
             });
             res.status(201).json({
@@ -23,7 +23,7 @@ class AuthController {
                         id: user.id,
                         email: user.email,
                         name: user.name,
-                        title: user.avatar,
+                        title: user.title,
                         avatar: user.avatar,
                     },
                     token,
@@ -75,6 +75,36 @@ class AuthController {
                 success: false,
                 message: "Login failed",
                 error: error instanceof Error ? error.message : "Unknown error",
+            });
+        }
+    }
+    static async refreshToken(req, res) {
+        try {
+            const { refreshToken } = req.body;
+            const decoded = (0, jwt_1.verifyToken)(refreshToken);
+            if (!decoded) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Invalid refresh token",
+                });
+            }
+            const newToken = (0, jwt_1.generateToken)({
+                userId: decoded.userId,
+                email: decoded.email,
+                name: decoded.name,
+                title: decoded.title,
+                avatar: decoded.avatar,
+            });
+            res.status(200).json({
+                success: true,
+                message: "Token refreshed",
+                data: { token: newToken }
+            });
+        }
+        catch (error) {
+            res.status(401).json({
+                success: false,
+                message: "Invalid refresh token",
             });
         }
     }
