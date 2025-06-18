@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>News API Documentation</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "#3B82F6",
+                            secondary: "#1E40AF",
+                            accent: "#F59E0B",
+                        },
+                    },
+                },
+            };
+        </script>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+            rel="stylesheet"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    </head>
+    <body class="bg-gray-50 text-gray-900">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <h1 class="text-2xl font-bold text-primary">
+                                📰 News API
+                            </h1>
+                        </div>
+                        <div class="ml-4">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                            >
+                                v1.0.0
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a
+                            href="https://github.com/fahrezapratamahidayat/rest-api-berita"
+                            class="text-gray-500 hover:text-gray-700 transition-colors"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                                />
+                            </svg>
+                        </a>
+                        <span class="text-sm text-gray-500"
+                            >by Fahreza Pratama Hidayat</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="bg-white border-b sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex space-x-8 overflow-x-auto">
+                    <a
+                        href="#overview"
+                        class="nav-link py-4 px-1 border-b-2 border-transparent hover:border-primary transition-colors whitespace-nowrap"
+                        >Overview</a
+                    >
+                    <a
+                        href="#authentication"
+                        class="nav-link py-4 px-1 border-b-2 border-transparent hover:border-primary transition-colors whitespace-nowrap"
+                        >Authentication</a
+                    >
+                    <a
+                        href="#articles"
+                        class="nav-link py-4 px-1 border-b-2 border-transparent hover:border-primary transition-colors whitespace-nowrap"
+                        >Articles</a
+                    >
+                    <a
+                        href="#bookmarks"
+                        class="nav-link py-4 px-1 border-b-2 border-transparent hover:border-primary transition-colors whitespace-nowrap"
+                        >Bookmarks</a
+                    >
+                    <a
+                        href="#errors"
+                        class="nav-link py-4 px-1 border-b-2 border-transparent hover:border-primary transition-colors whitespace-nowrap"
+                        >Error Handling</a
+                    >
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="lg:grid lg:grid-cols-4 lg:gap-8">
+                <!-- Sidebar -->
+                <div class="hidden lg:block lg:col-span-1">
+                    <div class="sticky top-24">
+                        <nav class="space-y-1">
+                            <div class="text-sm font-medium text-gray-900 mb-3">
+                                Quick Navigation
+                            </div>
+                            <a
+                                href="#overview"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors"
+                                >Overview</a
+                            >
+                            <a
+                                href="#base-url"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors"
+                                >Base URL</a
+                            >
+                            <a
+                                href="#authentication"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors"
+                                >Authentication</a
+                            >
+                            <a
+                                href="#register"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >Register</a
+                            >
+                            <a
+                                href="#login"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >Login</a
+                            >
+                            <a
+                                href="#articles"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors"
+                                >Articles</a
+                            >
+                            <a
+                                href="#get-articles"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >Get All Articles</a
+                            >
+                            <a
+                                href="#get-article"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >Get Article by ID</a
+                            >
+                            <a
+                                href="#create-article"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >Create Article</a
+                            >
+                            <a
+                                href="#update-article"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >Update Article</a
+                            >
+                            <a
+                                href="#delete-article"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >Delete Article</a
+                            >
+                            <a
+                                href="#trending"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >Trending Articles</a
+                            >
+                            <a
+                                href="#user-articles"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors ml-4"
+                                >User Articles</a
+                            >
+                            <a
+                                href="#bookmarks"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors"
+                                >Bookmarks</a
+                            >
+                            <a
+                                href="#errors"
+                                class="sidebar-link block px-3 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md transition-colors"
+                                >Error Handling</a
+                            >
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="lg:col-span-3">
+                    <!-- Overview Section -->
+                    <section id="overview" class="mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                            Overview
+                        </h2>
+                        <div
+                            class="bg-white rounded-lg shadow-sm border p-6 mb-6"
+                        >
+                            <p class="text-lg text-gray-700 mb-4">
+                                Welcome to the News API documentation! This
+                                RESTful API provides comprehensive news
+                                management capabilities with authentication,
+                                CRUD operations, and advanced features like
+                                bookmarking and trending articles.
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h3
+                                        class="font-semibold text-blue-900 mb-2"
+                                    >
+                                        🚀 Features
+                                    </h3>
+                                    <ul class="text-sm text-blue-800 space-y-1">
+                                        <li>• JWT Authentication</li>
+                                        <li>• Article CRUD Operations</li>
+                                        <li>• Bookmark System</li>
+                                        <li>• Trending Articles</li>
+                                        <li>• Category Filtering</li>
+                                        <li>• Pagination Support</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h3
+                                        class="font-semibold text-green-900 mb-2"
+                                    >
+                                        🔒 Security
+                                    </h3>
+                                    <ul
+                                        class="text-sm text-green-800 space-y-1"
+                                    >
+                                        <li>• Rate Limiting (100 req/hour)</li>
+                                        <li>• Input Validation</li>
+                                        <li>• CORS Protection</li>
+                                        <li>• Helmet.js Security Headers</li>
+                                        <li>• Password Hashing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Base URL Section -->
+                    <section id="base-url" class="mb-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                            Base URL
+                        </h2>
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <div
+                                class="bg-gray-100 rounded-lg p-4 font-mono text-sm"
+                            >
+                                <span class="text-green-600">Production:</span>
+                                https://rest-api-berita.vercel.app/api/v1
+                            </div>
+                            <p class="text-gray-600 mt-3 text-sm">
+                                All API endpoints are relative to this base URL.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Authentication Section -->
+                    <section id="authentication" class="mb-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                            Authentication
+                        </h2>
+
+                        <div
+                            class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6"
+                        >
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg
+                                        class="h-5 w-5 text-yellow-400"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3
+                                        class="text-sm font-medium text-yellow-800"
+                                    >
+                                        Authentication Required
+                                    </h3>
+                                    <p class="text-sm text-yellow-700 mt-1">
+                                        Some endpoints require authentication.
+                                        Include the JWT token in the
+                                        Authorization header.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Register Endpoint -->
+                        <div id="register" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Register User
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-3"
+                                            >POST</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/auth/register</code
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Create a new user account.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Request Body
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"
+                                    ><code class="language-json">{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "John Doe",
+  "title": "Software Developer",
+  "avatar": "https://example.com/avatar.jpg"
+}</code></pre>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Response
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-json">{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "id": "uuid",
+      "email": "user@example.com",
+      "name": "John Doe",
+      "title": "Software Developer",
+      "avatar": "https://example.com/avatar.jpg"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Login Endpoint -->
+                        <div id="login" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Login User
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-3"
+                                            >POST</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/auth/login</code
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Authenticate user and receive JWT token.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Request Body
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"
+                                    ><code class="language-json">{
+  "email": "user@example.com",
+  "password": "password123"
+}</code></pre>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Response
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-json">{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": "uuid",
+      "email": "user@example.com",
+      "name": "John Doe",
+      "title": "Software Developer",
+      "avatar": "https://example.com/avatar.jpg"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Articles Section -->
+                    <section id="articles" class="mb-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                            Articles
+                        </h2>
+
+                        <!-- Get All Articles -->
+                        <div id="get-articles" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Get All Articles
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-3"
+                                            >GET</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news</code
+                                        >
+                                        <span class="ml-2 text-xs text-gray-500"
+                                            >Public</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Retrieve a paginated list of all
+                                        articles.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Query Parameters
+                                    </h4>
+                                    <div class="overflow-x-auto mb-4">
+                                        <table
+                                            class="min-w-full divide-y divide-gray-200"
+                                        >
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th
+                                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                                                    >
+                                                        Parameter
+                                                    </th>
+                                                    <th
+                                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                                                    >
+                                                        Type
+                                                    </th>
+                                                    <th
+                                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                                                    >
+                                                        Description
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody
+                                                class="bg-white divide-y divide-gray-200"
+                                            >
+                                                <tr>
+                                                    <td
+                                                        class="px-4 py-2 text-sm font-mono"
+                                                    >
+                                                        page
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-2 text-sm"
+                                                    >
+                                                        number
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-2 text-sm"
+                                                    >
+                                                        Page number (default: 1)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-4 py-2 text-sm font-mono"
+                                                    >
+                                                        limit
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-2 text-sm"
+                                                    >
+                                                        number
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-2 text-sm"
+                                                    >
+                                                        Items per page (default:
+                                                        10)
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        class="px-4 py-2 text-sm font-mono"
+                                                    >
+                                                        category
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-2 text-sm"
+                                                    >
+                                                        string
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-2 text-sm"
+                                                    >
+                                                        Filter by category
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"
+                                    ><code class="language-bash">curl -X GET "https://rest-api-berita.vercel.app/api/v1/news?page=1&limit=10&category=Technology"</code></pre>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Response
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-json">{
+  "success": true,
+  "message": "Articles retrieved successfully",
+  "data": {
+    "articles": [
+      {
+        "id": "article_id",
+        "title": "Article Title",
+        "category": "Technology",
+        "publishedAt": "25 Nov 2023",
+        "readTime": "5 menit",
+        "imageUrl": "https://example.com/image.jpg",
+        "isTrending": true,
+        "tags": ["tech", "ai"],
+        "content": "Article content...",
+        "author": {
+          "name": "John Doe",
+          "title": "Tech Writer",
+          "avatar": "https://example.com/avatar.jpg"
+        },
+        "createdAt": "2023-11-25T10:00:00Z",
+        "updatedAt": "2023-11-25T10:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 50,
+      "hasMore": true
+    }
+  }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Get Article by ID -->
+                        <div id="get-article" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Get Article by ID
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-3"
+                                            >GET</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/{id}</code
+                                        >
+                                        <span class="ml-2 text-xs text-gray-500"
+                                            >Public</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Retrieve a specific article by its ID.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Path Parameters
+                                    </h4>
+                                    <div class="overflow-x-auto mb-4">
+                                        <table
+                                            class="min-w-full divide-y divide-gray-200"
+                                        >
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th
+                                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                                                    >
+                                                        Parameter
+                                                    </th>
+                                                    <th
+                                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                                                    >
+                                                        Type
+                                                    </th>
+                                                    <th
+                                                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                                                    >
+                                                        Description
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody
+                                                class="bg-white divide-y divide-gray-200"
+                                            >
+                                                <tr>
+                                                    <td
+                                                        class="px-4 py-2 text-sm font-mono"
+                                                    >
+                                                        id
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-2 text-sm"
+                                                    >
+                                                        string
+                                                    </td>
+                                                    <td
+                                                        class="px-4 py-2 text-sm"
+                                                    >
+                                                        Article ID
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"
+                                    ><code class="language-bash">curl -X GET "https://rest-api-berita.vercel.app/api/v1/news/article_id"</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Create Article -->
+                        <div id="create-article" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Create Article
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-3"
+                                            >POST</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news</code
+                                        >
+                                        <span class="ml-2 text-xs text-red-500"
+                                            >🔒 Protected</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Create a new article. Requires
+                                        authentication.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Headers
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"
+                                    ><code class="language-bash">Authorization: Bearer {jwt_token}
+Content-Type: application/json</code></pre>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Request Body
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"
+                                    ><code class="language-json">{
+  "title": "Article Title",
+  "category": "Technology",
+  "readTime": "5 menit",
+  "imageUrl": "https://example.com/image.jpg",
+  "isTrending": false,
+  "tags": ["tech", "news"],
+  "content": "Article content here..."
+}</code></pre>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-bash">curl -X POST "https://rest-api-berita.vercel.app/api/v1/news" \
+  -H "Authorization: Bearer {jwt_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "New Article",
+    "category": "Technology",
+    "readTime": "5 menit",
+    "imageUrl": "https://example.com/image.jpg",
+    "tags": ["tech"],
+    "content": "Article content..."
+  }'</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Update Article -->
+                        <div id="update-article" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Update Article
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mr-3"
+                                            >PUT</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/{id}</code
+                                        >
+                                        <span class="ml-2 text-xs text-red-500"
+                                            >🔒 Protected</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Update an existing article. Only the
+                                        author can update their articles.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Headers
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"
+                                    ><code class="language-bash">Authorization: Bearer {jwt_token}
+Content-Type: application/json</code></pre>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Request Body (Partial Update)
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-json">{
+  "title": "Updated Article Title",
+  "isTrending": true
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delete Article -->
+                        <div id="delete-article" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Delete Article
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mr-3"
+                                            >DELETE</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/{id}</code
+                                        >
+                                        <span class="ml-2 text-xs text-red-500"
+                                            >🔒 Protected</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Delete an article. Only the author can
+                                        delete their articles.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-bash">curl -X DELETE "https://rest-api-berita.vercel.app/api/v1/news/article_id" \
+  -H "Authorization: Bearer {jwt_token}"</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trending Articles -->
+                        <div id="trending" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Get Trending Articles
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-3"
+                                            >GET</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/trending</code
+                                        >
+                                        <span class="ml-2 text-xs text-gray-500"
+                                            >Public</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Retrieve articles marked as trending.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-bash">curl -X GET "https://rest-api-berita.vercel.app/api/v1/news/trending?page=1&limit=5"</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Articles -->
+                        <div id="user-articles" class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Get User Articles
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-3"
+                                            >GET</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/user/me</code
+                                        >
+                                        <span class="ml-2 text-xs text-red-500"
+                                            >🔒 Protected</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Retrieve articles created by the
+                                        authenticated user.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-bash">curl -X GET "https://rest-api-berita.vercel.app/api/v1/news/user/me" \
+  -H "Authorization: Bearer {jwt_token}"</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Bookmarks Section -->
+                    <section id="bookmarks" class="mb-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                            Bookmarks
+                        </h2>
+
+                        <!-- Save Article -->
+                        <div class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Save Article
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-3"
+                                            >POST</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/{id}/bookmark</code
+                                        >
+                                        <span class="ml-2 text-xs text-red-500"
+                                            >🔒 Protected</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Add an article to user's bookmarks.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-bash">curl -X POST "https://rest-api-berita.vercel.app/api/v1/news/article_id/bookmark" \
+  -H "Authorization: Bearer {jwt_token}"</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Remove Bookmark -->
+                        <div class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Remove Bookmark
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mr-3"
+                                            >DELETE</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/{id}/bookmark</code
+                                        >
+                                        <span class="ml-2 text-xs text-red-500"
+                                            >🔒 Protected</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Remove an article from user's bookmarks.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-bash">curl -X DELETE "https://rest-api-berita.vercel.app/api/v1/news/article_id/bookmark" \
+  -H "Authorization: Bearer {jwt_token}"</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Get Saved Articles -->
+                        <div class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Get Saved Articles
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-3"
+                                            >GET</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/bookmarks/list</code
+                                        >
+                                        <span class="ml-2 text-xs text-red-500"
+                                            >🔒 Protected</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Retrieve user's bookmarked articles.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-bash">curl -X GET "https://rest-api-berita.vercel.app/api/v1/news/bookmarks/list" \
+  -H "Authorization: Bearer {jwt_token}"</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Check Bookmark Status -->
+                        <div class="mb-8">
+                            <h3
+                                class="text-xl font-semibold text-gray-900 mb-4"
+                            >
+                                Check Bookmark Status
+                            </h3>
+                            <div
+                                class="bg-white rounded-lg shadow-sm border overflow-hidden"
+                            >
+                                <div class="bg-gray-50 px-6 py-3 border-b">
+                                    <div class="flex items-center">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-3"
+                                            >GET</span
+                                        >
+                                        <code class="text-sm font-mono"
+                                            >/news/{id}/bookmark</code
+                                        >
+                                        <span class="ml-2 text-xs text-red-500"
+                                            >🔒 Protected</span
+                                        >
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <p class="text-gray-700 mb-4">
+                                        Check if an article is bookmarked by the
+                                        user.
+                                    </p>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Example Request
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4"
+                                    ><code class="language-bash">curl -X GET "https://rest-api-berita.vercel.app/api/v1/news/article_id/bookmark" \
+  -H "Authorization: Bearer {jwt_token}"</code></pre>
+
+                                    <h4
+                                        class="font-semibold text-gray-900 mb-2"
+                                    >
+                                        Response
+                                    </h4>
+                                    <pre
+                                        class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                                    ><code class="language-json">{
+  "success": true,
+  "message": "Bookmark status retrieved",
+  "data": {
+    "isSaved": true
+  }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Error Handling Section -->
+                    <section id="errors" class="mb-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                            Error Handling
+                        </h2>
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <p class="text-gray-700 mb-4">
+                                The API uses conventional HTTP response codes to
+                                indicate success or failure of requests.
+                            </p>
+
+                            <h3
+                                class="text-lg font-semibold text-gray-900 mb-4"
+                            >
+                                HTTP Status Codes
+                            </h3>
+                            <div class="overflow-x-auto mb-6">
+                                <table
+                                    class="min-w-full divide-y divide-gray-200"
+                                >
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th
+                                                class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                                            >
+                                                Code
+                                            </th>
+                                            <th
+                                                class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                                            >
+                                                Description
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody
+                                        class="bg-white divide-y divide-gray-200"
+                                    >
+                                        <tr>
+                                            <td
+                                                class="px-4 py-2 text-sm font-mono text-green-600"
+                                            >
+                                                200
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">
+                                                OK - Request successful
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-4 py-2 text-sm font-mono text-green-600"
+                                            >
+                                                201
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">
+                                                Created - Resource created
+                                                successfully
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-4 py-2 text-sm font-mono text-yellow-600"
+                                            >
+                                                400
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">
+                                                Bad Request - Invalid request
+                                                data
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-4 py-2 text-sm font-mono text-red-600"
+                                            >
+                                                401
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">
+                                                Unauthorized - Authentication
+                                                required
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-4 py-2 text-sm font-mono text-red-600"
+                                            >
+                                                403
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">
+                                                Forbidden - Insufficient
+                                                permissions
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-4 py-2 text-sm font-mono text-red-600"
+                                            >
+                                                404
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">
+                                                Not Found - Resource not found
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-4 py-2 text-sm font-mono text-red-600"
+                                            >
+                                                429
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">
+                                                Too Many Requests - Rate limit
+                                                exceeded
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                class="px-4 py-2 text-sm font-mono text-red-600"
+                                            >
+                                                500
+                                            </td>
+                                            <td class="px-4 py-2 text-sm">
+                                                Internal Server Error - Server
+                                                error
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h3
+                                class="text-lg font-semibold text-gray-900 mb-4"
+                            >
+                                Error Response Format
+                            </h3>
+                            <pre
+                                class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto"
+                            ><code class="language-json">{
+  "success": false,
+  "message": "Error description",
+  "error": "Detailed error message"
+}</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Rate Limiting Section -->
+                    <section class="mb-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                            Rate Limiting
+                        </h2>
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <p class="text-gray-700 mb-4">
+                                The API implements rate limiting to ensure fair
+                                usage:
+                            </p>
+                            <ul
+                                class="list-disc list-inside text-gray-700 space-y-2"
+                            >
+                                <li>
+                                    <strong>Limit:</strong> 100 requests per
+                                    hour per IP address
+                                </li>
+                                <li>
+                                    <strong>Headers:</strong> Rate limit
+                                    information is included in response headers
+                                </li>
+                                <li>
+                                    <strong>Exceeded:</strong> Returns 429
+                                    status code when limit is exceeded
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-center"
+                >
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            News API
+                        </h3>
+                        <span class="ml-2 text-sm text-gray-500">v1.0.0</span>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <a
+                            href="https://github.com/fahrezapratamahidayat/rest-api-berita"
+                            class="text-gray-500 hover:text-gray-700 transition-colors"
+                        >
+                            GitHub Repository
+                        </a>
+                        <span class="text-gray-500">•</span>
+                        <span class="text-sm text-gray-500"
+                            >Built with Express.js & TypeScript</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(
+                        this.getAttribute("href")
+                    );
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                        });
+                    }
+                });
+            });
+
+            // Active navigation highlighting
+            function updateActiveNav() {
+                const sections = document.querySelectorAll("section[id]");
+                const navLinks = document.querySelectorAll(
+                    ".nav-link, .sidebar-link"
+                );
+
+                let current = "";
+                sections.forEach((section) => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (window.scrollY >= sectionTop - 100) {
+                        current = section.getAttribute("id");
+                    }
+                });
+
+                navLinks.forEach((link) => {
+                    link.classList.remove("border-primary", "text-primary");
+                    if (link.getAttribute("href") === `#${current}`) {
+                        if (link.classList.contains("nav-link")) {
+                            link.classList.add(
+                                "border-primary",
+                                "text-primary"
+                            );
+                        } else {
+                            link.classList.add("text-primary");
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener("scroll", updateActiveNav);
+            updateActiveNav(); // Initial call
+
+            // Copy code functionality
+            document.querySelectorAll("pre code").forEach((block) => {
+                const button = document.createElement("button");
+                button.className =
+                    "absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 text-gray-300 rounded hover:bg-gray-600 transition-colors";
+                button.textContent = "Copy";
+
+                const pre = block.parentElement;
+                pre.style.position = "relative";
+                pre.appendChild(button);
+
+                button.addEventListener("click", () => {
+                    navigator.clipboard
+                        .writeText(block.textContent)
+                        .then(() => {
+                            button.textContent = "Copied!";
+                            setTimeout(() => {
+                                button.textContent = "Copy";
+                            }, 2000);
+                        });
+                });
+            });
+        </script>
+    </body>
+</html>

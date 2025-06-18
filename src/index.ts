@@ -1,22 +1,39 @@
 import express from "express";
 import helmet from "helmet";
 import dotenv from "dotenv";
-import routes from "./routes";
-import { rateLimiter } from "./middleware/rateLimiter";
+import path from "path";
+import { fileURLToPath } from "url";
+import routes from "./routes/index.js";
+import { rateLimiter } from "./middleware/rateLimiter.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
+            scriptSrc: ["'self'", "https://cdn.tailwindcss.com"],
+            fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+        },
+    },
+}));
 
 app.use(rateLimiter);
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+app.use(express.static(path.join(__dirname, "..", "public")));
+
 app.use("/api/v1", routes);
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
 
 app.use(
     (
@@ -37,17 +54,6 @@ app.use(
     }
 );
 
-app.get("/", (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: "Selamat datang di News API",
-        version: "1.0.0",
-        documentation: "/api/v1/health",
-        developedBy: "Fahreza Pratama Hidayat",
-        repository: "https://github.com/fahrezapratamahidayat/rest-api-berita",
-    });
-});
-
 app.use("*", (req, res) => {
     res.status(404).json({
         success: false,
@@ -58,6 +64,7 @@ app.use("*", (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 News API server is running on port ${PORT}`);
     console.log(`📚 API Documentation: http://localhost:${PORT}/api/v1/health`);
+    console.log(`🌐 Frontend: http://localhost:${PORT}`);
 });
 
 export default app;

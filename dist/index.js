@@ -6,16 +6,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const helmet_1 = __importDefault(require("helmet"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const routes_1 = __importDefault(require("./routes"));
-const rateLimiter_1 = require("./middleware/rateLimiter");
+const path_1 = __importDefault(require("path"));
+const index_js_1 = __importDefault(require("./routes/index.js"));
+const rateLimiter_js_1 = require("./middleware/rateLimiter.js");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
-app.use((0, helmet_1.default)());
-app.use(rateLimiter_1.rateLimiter);
+app.use((0, helmet_1.default)({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
+            scriptSrc: ["'self'", "https://cdn.tailwindcss.com"],
+            fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+        },
+    },
+}));
+app.use(rateLimiter_js_1.rateLimiter);
 app.use(express_1.default.json({ limit: "10mb" }));
 app.use(express_1.default.urlencoded({ extended: true, limit: "10mb" }));
-app.use("/api/v1", routes_1.default);
+app.use(express_1.default.static(path_1.default.join(__dirname, "..", "public")));
+app.use("/api/v1", index_js_1.default);
+app.get("/", (req, res) => {
+    res.sendFile(path_1.default.join(__dirname, "..", "public", "index.html"));
+});
 app.use((err, req, res, next) => {
     console.error("Global error:", err);
     res.status(500).json({
@@ -24,16 +38,6 @@ app.use((err, req, res, next) => {
         error: process.env.NODE_ENV === "development"
             ? err.message
             : undefined,
-    });
-});
-app.get("/", (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: "Selamat datang di News API",
-        version: "1.0.0",
-        documentation: "/api/v1/health",
-        developedBy: "Fahreza Pratama Hidayat",
-        repository: "https://github.com/fahrezapratamahidayat/rest-api-berita",
     });
 });
 app.use("*", (req, res) => {
@@ -45,6 +49,7 @@ app.use("*", (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 News API server is running on port ${PORT}`);
     console.log(`📚 API Documentation: http://localhost:${PORT}/api/v1/health`);
+    console.log(`🌐 Frontend: http://localhost:${PORT}`);
 });
 exports.default = app;
 //# sourceMappingURL=index.js.map
