@@ -201,7 +201,6 @@ GET /health
 -   `is_trending` (boolean, default: false)
 -   `tags` (text array)
 -   `content` (text, required)
--   `author` (jsonb, required)
 -   `created_at` (timestamp)
 -   `updated_at` (timestamp)
 
