@@ -67,11 +67,29 @@ export class ArticleService {
         }
     }
 
-    static async getArticleById(id: string): Promise<Article | null> {
+    static async getArticleById(id: string): Promise<ArticleWithAuthor | null> {
         try {
             const result = await db
-                .select()
+                .select({
+                    id: articles.id,
+                    title: articles.title,
+                    category: articles.category,
+                    publishedAt: articles.publishedAt,
+                    readTime: articles.readTime,
+                    imageUrl: articles.imageUrl,
+                    isTrending: articles.isTrending,
+                    tags: articles.tags,
+                    content: articles.content,
+                    createdAt: articles.createdAt,
+                    updatedAt: articles.updatedAt,
+                    author: {
+                        name: users.name,
+                        title: users.title,
+                        avatar: users.avatar,
+                    },
+                })
                 .from(articles)
+                .leftJoin(users, eq(articles.authorId, users.id))
                 .where(eq(articles.id, id))
                 .limit(1);
 
