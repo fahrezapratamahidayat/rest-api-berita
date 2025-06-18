@@ -52,7 +52,7 @@ class AuthController {
                 userId: user.id,
                 email: user.email,
                 name: user.name,
-                title: user.avatar,
+                title: user.title,
                 avatar: user.avatar,
             });
             res.status(200).json({
