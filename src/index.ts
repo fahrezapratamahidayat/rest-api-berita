@@ -37,6 +37,17 @@ app.use(
     }
 );
 
+app.get("/", (req, res) => {
+    res.json({
+        success: true,
+        message: "Selamat datang di News API",
+        version: "1.0.0",
+        documentation: "/api/v1/health",
+        developer: "Fahreza Pratama Hidayat",
+        repository: "https://github.com/fahrezapratamahidayat/rest-api-berita",
+    });
+});
+
 app.use("*", (req, res) => {
     res.status(404).json({
         success: false,
