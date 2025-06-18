@@ -103,7 +103,6 @@ class ArticleController {
             }
             const { id } = req.params;
             const articleData = req.body;
-            // Verifikasi bahwa artikel milik user yang sedang login
             const existingArticle = await articleService_1.ArticleService.getArticleById(id);
             if (!existingArticle) {
                 return res.status(404).json({
@@ -141,7 +140,6 @@ class ArticleController {
                 });
             }
             const { id } = req.params;
-            // Verifikasi bahwa artikel milik user yang sedang login
             const existingArticle = await articleService_1.ArticleService.getArticleById(id);
             if (!existingArticle) {
                 return res.status(404).json({

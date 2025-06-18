@@ -11,7 +11,6 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 async function seedDatabase() {
     try {
         console.log("🌱 Starting database seeding...");
-        // Clear existing data
         await db_1.db.delete(db_1.articles);
         console.log("🗑️  Cleared existing articles");
         await db_1.db.delete(db_1.users);
