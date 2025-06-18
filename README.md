@@ -92,7 +92,7 @@ The API will be available at `http://localhost:3000`
 ### Base URL
 
 ```
-http://localhost:3000/api/v1
+http:rest-api-berita.vercel.app/api/v1
 ```
 
 ### Authentication
