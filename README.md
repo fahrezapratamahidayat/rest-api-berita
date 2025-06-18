@@ -85,14 +85,14 @@ npm run build
 npm start
 ```
 
-The API will be available at `http://localhost:3000`
+The API will be available at `http://rest-api-berita.vercel.app`
 
 ## 📚 API Documentation
 
 ### Base URL
 
 ```
-http://localhost:3000/api/v1
+https://rest-api-berita.vercel.app/api/v1/health
 ```
 
 ### Authentication
