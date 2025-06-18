@@ -6,7 +6,7 @@ export declare class ArticleService {
         total: number;
         hasMore: boolean;
     }>;
-    static getArticleById(id: string): Promise<Article | null>;
+    static getArticleById(id: string): Promise<ArticleWithAuthor | null>;
     static createArticle(articleData: CreateArticleInput): Promise<Article>;
     static updateArticle(id: string, articleData: UpdateArticleInput): Promise<Article | null>;
     static deleteArticle(id: string): Promise<boolean>;
