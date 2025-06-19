@@ -33,7 +33,7 @@ export const articles = pgTable("articles", {
     content: text("content").notNull(),
     authorId: uuid("author_id")
         .notNull()
-        .references(() => users.id),
+        .references(() => users.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -43,10 +43,10 @@ export const savedArticles = pgTable(
     {
         userId: uuid("user_id")
             .notNull()
-            .references(() => users.id),
+            .references(() => users.id, { onDelete: "cascade" }),
         articleId: text("article_id")
             .notNull()
-            .references(() => articles.id),
+            .references(() => articles.id, { onDelete: "cascade" }),
         savedAt: timestamp("saved_at").defaultNow().notNull(),
     },
     (table) => {

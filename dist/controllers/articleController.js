@@ -153,10 +153,17 @@ class ArticleController {
                     message: "You are not authorized to delete this article",
                 });
             }
-            const deleted = articleService_1.ArticleService.deleteArticle(id);
+            const deleted = await articleService_1.ArticleService.deleteArticle(id);
+            if (!deleted) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to delete article",
+                });
+            }
             res.status(200).json({
                 success: true,
                 message: "Article deleted successfully",
+                data: { id },
             });
         }
         catch (error) {

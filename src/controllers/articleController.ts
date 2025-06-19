@@ -145,46 +145,54 @@ export class ArticleController {
         }
     }
 
-    static async deleteArticle(req: AuthRequest, res: Response<ApiResponse>) {
-        try {
-            if (!req.user) {
-                return res.status(401).json({
-                    success: false,
-                    message: "Authentication required",
-                });
-            }
-
-            const { id } = req.params;
-
-            const existingArticle = await ArticleService.getArticleById(id);
-            if (!existingArticle) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Article not found",
-                });
-            }
-
-            if (existingArticle.authorId !== req.user.userId) {
-                return res.status(403).json({
-                    success: false,
-                    message: "You are not authorized to delete this article",
-                });
-            }
-
-            const deleted = ArticleService.deleteArticle(id);
-
-            res.status(200).json({
-                success: true,
-                message: "Article deleted successfully",
-            });
-        } catch (error) {
-            res.status(500).json({
+static async deleteArticle(req: AuthRequest, res: Response<ApiResponse>) {
+    try {
+        if (!req.user) {
+            return res.status(401).json({
                 success: false,
-                message: "Failed to delete article",
-                error: error instanceof Error ? error.message : "Unknown error",
+                message: "Authentication required",
             });
         }
+
+        const { id } = req.params;
+
+        const existingArticle = await ArticleService.getArticleById(id);
+        if (!existingArticle) {
+            return res.status(404).json({
+                success: false,
+                message: "Article not found",
+            });
+        }
+
+        if (existingArticle.authorId !== req.user.userId) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to delete this article",
+            });
+        }
+
+        const deleted = await ArticleService.deleteArticle(id);
+
+        if (!deleted) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to delete article",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Article deleted successfully",
+            data: { id },
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to delete article",
+            error: error instanceof Error ? error.message : "Unknown error",
+        });
     }
+}
 
     static async getTrendingArticles(req: Request, res: Response<ApiResponse>) {
         try {

@@ -27,17 +27,17 @@ exports.articles = (0, pg_core_1.pgTable)("articles", {
     content: (0, pg_core_1.text)("content").notNull(),
     authorId: (0, pg_core_1.uuid)("author_id")
         .notNull()
-        .references(() => exports.users.id),
+        .references(() => exports.users.id, { onDelete: "cascade" }),
     createdAt: (0, pg_core_1.timestamp)("created_at").defaultNow().notNull(),
     updatedAt: (0, pg_core_1.timestamp)("updated_at").defaultNow().notNull(),
 });
 exports.savedArticles = (0, pg_core_1.pgTable)("saved_articles", {
     userId: (0, pg_core_1.uuid)("user_id")
         .notNull()
-        .references(() => exports.users.id),
+        .references(() => exports.users.id, { onDelete: "cascade" }),
     articleId: (0, pg_core_1.text)("article_id")
         .notNull()
-        .references(() => exports.articles.id),
+        .references(() => exports.articles.id, { onDelete: "cascade" }),
     savedAt: (0, pg_core_1.timestamp)("saved_at").defaultNow().notNull(),
 }, (table) => {
     return {
