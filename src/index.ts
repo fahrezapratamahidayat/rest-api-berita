@@ -1,6 +1,6 @@
 import express from "express";
 import helmet from "helmet";
-import cors from "cors"; // Tambahkan ini
+import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import routes from "./routes/index.js";
