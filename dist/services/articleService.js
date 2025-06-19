@@ -198,7 +198,7 @@ class ArticleService {
                 tags: db_1.articles.tags,
                 content: db_1.articles.content,
                 authorId: db_1.articles.authorId,
-                users: {
+                author: {
                     name: db_1.users.name,
                     title: db_1.users.title,
                     avatar: db_1.users.avatar,

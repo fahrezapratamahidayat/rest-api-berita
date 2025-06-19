@@ -273,7 +273,7 @@ export class ArticleService {
                     tags: articles.tags,
                     content: articles.content,
                     authorId: articles.authorId,
-                    users: {
+                    author: {
                         name: users.name,
                         title: users.title,
                         avatar: users.avatar,
