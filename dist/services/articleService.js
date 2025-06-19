@@ -117,15 +117,80 @@ class ArticleService {
         }
     }
     static async deleteArticle(id) {
+        console.log("🔍 Starting delete process for article ID:", id);
         try {
-            const result = await db_1.db
+            return await db_1.db.transaction(async (tx) => {
+                console.log("📝 Transaction started");
+                // 1. Cek artikel ada atau tidak sebelum hapus
+                const existingArticle = await tx
+                    .select()
+                    .from(db_1.articles)
+                    .where((0, drizzle_orm_1.eq)(db_1.articles.id, id));
+                console.log("📄 Article exists before delete:", existingArticle.length > 0);
+                if (existingArticle.length === 0) {
+                    console.log("❌ Article not found in database");
+                    return false;
+                }
+                // 2. Cek saved articles yang akan dihapus
+                const savedArticlesToDelete = await tx
+                    .select()
+                    .from(db_1.savedArticles)
+                    .where((0, drizzle_orm_1.eq)(db_1.savedArticles.articleId, id));
+                console.log("💾 Saved articles to delete:", savedArticlesToDelete.length);
+                // 3. Hapus saved articles terlebih dahulu
+                const deletedSavedArticles = await tx
+                    .delete(db_1.savedArticles)
+                    .where((0, drizzle_orm_1.eq)(db_1.savedArticles.articleId, id))
+                    .returning();
+                console.log("🗑️ Saved articles deleted:", deletedSavedArticles.length);
+                // 4. Hapus artikel
+                const deletedArticles = await tx
+                    .delete(db_1.articles)
+                    .where((0, drizzle_orm_1.eq)(db_1.articles.id, id))
+                    .returning();
+                console.log("📰 Articles deleted:", deletedArticles.length);
+                // 5. Verify artikel benar-benar terhapus
+                const verifyDeleted = await tx
+                    .select()
+                    .from(db_1.articles)
+                    .where((0, drizzle_orm_1.eq)(db_1.articles.id, id));
+                console.log("✅ Verification - Article still exists:", verifyDeleted.length > 0);
+                const success = deletedArticles.length > 0 && verifyDeleted.length === 0;
+                console.log("🎯 Delete operation success:", success);
+                return success;
+            });
+        }
+        catch (error) {
+            console.error("💥 Delete operation failed:", error);
+            throw new Error(`Failed to delete article: ${error instanceof Error ? error.message : "Unknown error"}`);
+        }
+    }
+    static async deleteArticleSimple(id) {
+        console.log('🔍 Simple delete for article ID:', id);
+        try {
+            // 1. Hapus saved articles dulu
+            const deletedSaved = await db_1.db
+                .delete(db_1.savedArticles)
+                .where((0, drizzle_orm_1.eq)(db_1.savedArticles.articleId, id))
+                .returning();
+            console.log('💾 Saved articles deleted:', deletedSaved.length);
+            // 2. Hapus artikel
+            const deletedArticles = await db_1.db
                 .delete(db_1.articles)
                 .where((0, drizzle_orm_1.eq)(db_1.articles.id, id))
                 .returning();
-            return result.length > 0;
+            console.log('📰 Articles deleted:', deletedArticles.length);
+            // 3. Verify
+            const verify = await db_1.db
+                .select()
+                .from(db_1.articles)
+                .where((0, drizzle_orm_1.eq)(db_1.articles.id, id));
+            console.log('✅ Article still exists after delete:', verify.length > 0);
+            return deletedArticles.length > 0 && verify.length === 0;
         }
         catch (error) {
-            throw new Error(`Failed to delete article: ${error instanceof Error ? error.message : "Unknown error"}`);
+            console.error('💥 Simple delete failed:', error);
+            throw error;
         }
     }
     static async getArticlesByCategory(category) {

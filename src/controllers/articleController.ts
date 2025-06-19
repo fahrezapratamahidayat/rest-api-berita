@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { ArticleService } from "../services/articleService";
 import { ApiResponse, CreateArticleInput, UpdateArticleInput } from "../types";
 import { AuthRequest } from "../middleware/auth";
+import { articles, db, savedArticles } from "../db";
+import { eq } from "drizzle-orm";
 
 export class ArticleController {
     static async getAllArticles(req: Request, res: Response<ApiResponse>) {
@@ -145,54 +147,66 @@ export class ArticleController {
         }
     }
 
-static async deleteArticle(req: AuthRequest, res: Response<ApiResponse>) {
-    try {
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                message: "Authentication required",
+    static async deleteArticle(req: AuthRequest, res: Response<ApiResponse>) {
+        try {
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Authentication required",
+                });
+            }
+
+            const { id } = req.params;
+
+            const existingArticle = await ArticleService.getArticleById(id);
+
+            if (!existingArticle) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Article not found",
+                });
+            }
+
+            if (existingArticle.authorId !== req.user.userId) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You are not authorized to delete this article",
+                });
+            }
+
+            const deleted = await ArticleService.deleteArticleSimple(id);
+
+            if (!deleted) {
+                const deletedWithTransaction =
+                    await ArticleService.deleteArticle(id);
+
+                if (!deletedWithTransaction) {
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to delete article - no rows affected",
+                    });
+                }
+            }
+
+            const finalCheck = await ArticleService.getArticleById(id);
+
+            res.status(200).json({
+                success: true,
+                message: "Article deleted successfully",
+                data: {
+                    deleted: true,
+                    finalVerification: !finalCheck,
+                },
             });
-        }
-
-        const { id } = req.params;
-
-        const existingArticle = await ArticleService.getArticleById(id);
-        if (!existingArticle) {
-            return res.status(404).json({
-                success: false,
-                message: "Article not found",
-            });
-        }
-
-        if (existingArticle.authorId !== req.user.userId) {
-            return res.status(403).json({
-                success: false,
-                message: "You are not authorized to delete this article",
-            });
-        }
-
-        const deleted = await ArticleService.deleteArticle(id);
-
-        if (!deleted) {
-            return res.status(500).json({
+        } catch (error) {
+            console.error("💥 Controller error:", error);
+            res.status(500).json({
                 success: false,
                 message: "Failed to delete article",
+                error: error instanceof Error ? error.message : "Unknown error",
             });
         }
-
-        res.status(200).json({
-            success: true,
-            message: "Article deleted successfully",
-            data: { id },
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Failed to delete article",
-            error: error instanceof Error ? error.message : "Unknown error",
-        });
     }
-}
 
     static async getTrendingArticles(req: Request, res: Response<ApiResponse>) {
         try {
@@ -249,7 +263,7 @@ static async deleteArticle(req: AuthRequest, res: Response<ApiResponse>) {
             const articles = await ArticleService.getArticlesByUser(
                 req.user.userId,
                 page,
-                limit,
+                limit
             );
 
             res.status(200).json({

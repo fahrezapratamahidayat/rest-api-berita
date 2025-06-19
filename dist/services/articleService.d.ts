@@ -10,6 +10,7 @@ export declare class ArticleService {
     static createArticle(articleData: CreateArticleInput): Promise<Article>;
     static updateArticle(id: string, articleData: UpdateArticleInput): Promise<Article | null>;
     static deleteArticle(id: string): Promise<boolean>;
+    static deleteArticleSimple(id: string): Promise<boolean>;
     static getArticlesByCategory(category: string): Promise<Article[]>;
     static getTrendingArticles(page?: number, limit?: number): Promise<{
         articles: ArticleWithAuthor[];

@@ -1,8 +1,8 @@
 import express from "express";
 import helmet from "helmet";
+import cors from "cors"; // Tambahkan ini
 import dotenv from "dotenv";
 import path from "path";
-import { fileURLToPath } from "url";
 import routes from "./routes/index.js";
 import { rateLimiter } from "./middleware/rateLimiter.js";
 
@@ -10,6 +10,13 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 
 app.use(helmet({
     contentSecurityPolicy: {

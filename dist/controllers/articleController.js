@@ -153,20 +153,28 @@ class ArticleController {
                     message: "You are not authorized to delete this article",
                 });
             }
-            const deleted = await articleService_1.ArticleService.deleteArticle(id);
+            const deleted = await articleService_1.ArticleService.deleteArticleSimple(id);
             if (!deleted) {
-                return res.status(500).json({
-                    success: false,
-                    message: "Failed to delete article",
-                });
+                const deletedWithTransaction = await articleService_1.ArticleService.deleteArticle(id);
+                if (!deletedWithTransaction) {
+                    return res.status(500).json({
+                        success: false,
+                        message: "Failed to delete article - no rows affected",
+                    });
+                }
             }
+            const finalCheck = await articleService_1.ArticleService.getArticleById(id);
             res.status(200).json({
                 success: true,
                 message: "Article deleted successfully",
-                data: { id },
+                data: {
+                    deleted: true,
+                    finalVerification: !finalCheck,
+                },
             });
         }
         catch (error) {
+            console.error("💥 Controller error:", error);
             res.status(500).json({
                 success: false,
                 message: "Failed to delete article",

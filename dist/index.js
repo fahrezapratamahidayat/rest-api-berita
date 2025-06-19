@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const helmet_1 = __importDefault(require("helmet"));
+const cors_1 = __importDefault(require("cors")); // Tambahkan ini
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 const index_js_1 = __importDefault(require("./routes/index.js"));
@@ -12,6 +13,11 @@ const rateLimiter_js_1 = require("./middleware/rateLimiter.js");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
+app.use((0, cors_1.default)({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use((0, helmet_1.default)({
     contentSecurityPolicy: {
         directives: {
